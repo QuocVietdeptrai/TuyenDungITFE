@@ -15,24 +15,33 @@ export const Header = () => {
 
   return (
     <>
-      <header className="bg-[#000071] py-[15px] px-[16px]">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-[#0a0a0a] via-[#0f172a] to-[#003366] py-[15px] px-[16px]">
         <div className="container mx-auto">
           {/* Wrap */}
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="text-white font-[800] sm:text-[28px] text-[20px] lg:flex-none flex-1">
-              28.ITJobs
+            <Link
+              href="/"
+              className="text-white font-extrabold sm:text-[28px] text-[20px] lg:flex-none flex-1"
+            >
+              JobITViet
             </Link>
+
             {/* Menu */}
             <HeaderMenu showMenu={showMenu} />
-            {/* Account */}
-            <HeaderAccount />
+
+            {/* Account + Language */}
+            <div className="flex items-center gap-4">
+              <HeaderAccount />
+            </div>
+
             {/* Button Menu Mobile */}
-            <button 
+            <button
               onClick={handleShowMenu}
               className="text-white text-[20px] lg:hidden inline-block ml-[12px]"
             >
-              <FaBars className="" />
+              <FaBars />
             </button>
           </div>
         </div>
