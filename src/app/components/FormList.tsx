@@ -45,7 +45,7 @@ export default function FormList({ type }: { type: "city" | "skill" }) {
               href={
                 type === "city"
                   ? `/search?city=${encodeURIComponent(item.name)}`
-                  : `/search?skill=${encodeURIComponent(item.name)}`
+                  : `/search?language=${encodeURIComponent(item.name)}`
               }
               className="block p-2 border rounded hover:bg-gray-100 cursor-pointer"
             >

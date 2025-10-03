@@ -194,7 +194,7 @@ export const HeaderMenu = (props: { showMenu: boolean }) => {
                             {displayedSkills.map((skill: any, idx: number) => (
                               <Link
                                 key={idx}
-                                href={`/search?skill=${encodeURIComponent(skill?.name ?? "")}`}
+                                href={`/search?language=${encodeURIComponent(skill?.name ?? "")}`}
                                 className="block py-2 px-3 rounded hover:bg-[#000096] text-white font-[500] text-[15px]"
                               >
                                 {skill?.name ?? "Chưa có tên"}

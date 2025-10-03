@@ -3,35 +3,36 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FaMagnifyingGlass } from "react-icons/fa6"
+import { FaMagnifyingGlass } from "react-icons/fa6";
+import Slider from "react-slick"; // 👈 import react-slick
 
 export const Section1 = () => {
   const router = useRouter();
 
   const [jobList, setJobList] = useState<any[]>([]);
   const [cityList, setCityList] = useState<any[]>([]);
+  const [skillList, setSkillList] = useState<any[]>([]);
 
   // Fetch job list
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/company/job/list`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/job/list`, {
       method: "GET",
-      credentials: "include", // Gửi kèm cookie
+      credentials: "include",
     })
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.code === "success") {
           setJobList(data.jobs || []);
         }
       })
-      .catch(err => console.error("Lỗi khi fetch job list:", err));
+      .catch((err) => console.error("Lỗi khi fetch job list:", err));
   }, []);
 
   // Fetch city list
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/job/job-by-city`)
-      .then(res => res.json())
-      .then(data => {
-        console.log("City API:", data); // Debug xem backend trả gì
+      .then((res) => res.json())
+      .then((data) => {
         const list = Array.isArray(data.cityList)
           ? data.cityList
           : Array.isArray(data)
@@ -39,7 +40,22 @@ export const Section1 = () => {
           : [];
         setCityList(list);
       })
-      .catch(err => console.error("Lỗi khi fetch city list:", err));
+      .catch((err) => console.error("Lỗi khi fetch city list:", err));
+  }, []);
+
+  // Fetch skill list
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/job/job-by-skill`)
+      .then((res) => res.json())
+      .then((data) => {
+        const list = Array.isArray(data.skillList)
+          ? data.skillList
+          : Array.isArray(data)
+          ? data
+          : [];
+        setSkillList(list);
+      })
+      .catch((err) => console.error("Lỗi khi fetch skill list:", err));
   }, []);
 
   const handleSearch = (event: any) => {
@@ -50,6 +66,32 @@ export const Section1 = () => {
     router.push(`/search?city=${city}&keyword=${keyword}`);
   };
 
+  const sliderSettings = {
+    dots: false,
+    infinite: true,
+    speed: 600,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    slidesToShow: 6,
+    slidesToScroll: 1,
+    arrows: false,
+    pauseOnHover: true,
+    responsive: [
+      {
+        breakpoint: 1024, 
+        settings: {
+          slidesToShow: 4,
+        },
+      },
+      {
+        breakpoint: 640, // Mobile
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+    ],
+  };
+
   return (
     <>
       <div className="bg-gradient-to-r from-[#0a0a0a] via-[#0f172a] to-[#003366] text-white pt-12 pb-6 px-6 relative overflow-hidden">
@@ -58,9 +100,9 @@ export const Section1 = () => {
             {jobList.length} Việc làm IT cho Developer &quot;Chất&quot;
           </h1>
 
+          {/* Form Search */}
           <form
             onSubmit={handleSearch}
-            action=""
             className="flex flex-wrap gap-x-[15px] gap-y-[12px] mb-[30px]"
           >
             <select
@@ -78,7 +120,7 @@ export const Section1 = () => {
             <input
               type="text"
               name="keyword"
-              placeholder="Nhập từ khoá..."
+              placeholder="Nhập từ khoá tìm kiếm..."
               className="md:flex-1 flex-none w-[100%] bg-white h-[56px] rounded-[4px] px-[20px] font-[500] text-[16px]"
             />
 
@@ -87,30 +129,28 @@ export const Section1 = () => {
             </button>
           </form>
 
-          <div className="flex flex-wrap gap-x-[12px] gap-y-[15px] items-center">
-            <div className="text-[#DEDEDE] font-[500] text-[16px]">
+          {/* Skill List Carousel */}
+          <div className="flex flex-col gap-y-[15px]">
+            <div className="text-[#DEDEDE] font-[500] text-[16px] mb-2">
               Mọi người đang tìm kiếm:
             </div>
-            <div className="flex flex-wrap gap-[10px]">
-              <Link
-                href="/search?language=ReactJS"
-                className="border border-[#414042] bg-[#121212] hover:bg-[#414042] rounded-[20px] inline-block text-[#DEDEDE] hover:text-white font-[500] text-[16px] py-[8px] px-[22px]"
-              >
-                ReactJS
-              </Link>
-              <Link
-                href="/search?language=Javascript"
-                className="border border-[#414042] bg-[#121212] hover:bg-[#414042] rounded-[20px] inline-block text-[#DEDEDE] hover:text-white font-[500] text-[16px] py-[8px] px-[22px]"
-              >
-                Javascript
-              </Link>
-              <Link
-                href="/search?language=NodeJS"
-                className="border border-[#414042] bg-[#121212] hover:bg-[#414042] rounded-[20px] inline-block text-[#DEDEDE] hover:text-white font-[500] text-[16px] py-[8px] px-[22px]"
-              >
-                NodeJS
-              </Link>
-            </div>
+            <Slider {...sliderSettings}>
+              {skillList.map((skill: any, index: number) => (
+                <Link
+                  key={index}
+                  href={`/search?language=${skill.name || skill}`}
+                  className="mx-2 bg-[#0f0f0f] border border-[#2a2a2a] 
+                            rounded-full inline-block
+                            text-[#ffffff] font-[600] text-[15px] 
+                            py-[6px] px-[18px]
+                            hover:bg-[#1a1a1a] hover:border-[#444]
+                            transition-all duration-200 ease-in-out
+                            text-center"
+                >
+                  {skill.name || skill}
+                </Link>
+              ))}
+            </Slider>
           </div>
         </div>
       </div>
